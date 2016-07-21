@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper .//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.newins.dao.AssessDao">
+	<resultMap type="com.newins.model.Assess" id="assessMap">
+		<result property="aqnId" column="aqnId" />
+		<result property="collectedNum" column="collectedNum" />
+		<result property="collectNum" column="collectNum" />
+		<result property="winnerNum" column="winnerNum" />
+		<result property="awardId" column="awardId" />
+		<result property="awardName" column="awardName" />
+		<result property="awardNum" column="awardNum" />
+		<result property="showDes" column="showDes" />
+		<result property="bTime" column="bTime" />
+		<result property="eTime" column="eTime" />
+		<result property="showTitle" column="showTitle" />
+		<result property="publisher" column="publisherName" />
+		<result property="aqnSummary" column="aqnSummary" />
+		<result property="img" column="img" />
+		<result property="tag1Str" column="tag1Str" />
+		<result property="tag2Str" column="tag2Str" />
+		<result property="tag3Str" column="tag3Str" />
+		<result property="tag4Str" column="tag4Str" />
+		<result property="tag5Str" column="tag5Str" />
+		<result property="adId" column="adId"/>
+	</resultMap>
+
+	<select id="getAssess" resultMap="assessMap">
+		SELECT
+		ni_assess_wanx.deliveryId,
+		ni_assess_wanx.aqnId,
+		ni_assess_delivery_wanx.bTime,
+		ni_assess_delivery_wanx.eTime,
+		ni_assess_delivery_wanx.collectNum,
+		ni_assess_delivery_wanx.showTitle,
+		ni_assess_delivery_wanx.showDes,
+		ni_assess_delivery_wanx.img,
+		ni_assess_delivery_wanx.collectedNum,
+		ni_assess_delivery_wanx.tag1Str,
+		ni_assess_delivery_wanx.tag2Str,
+		ni_assess_delivery_wanx.tag3Str,
+		ni_assess_delivery_wanx.tag4Str,
+		ni_assess_delivery_wanx.tag5Str,
+		ni_assess_questionnaire.publisherName,
+		ni_assess_questionnaire.aqnSummary,
+		ni_award.awardNum,
+		ni_award.awardName,
+		ni_award.awardId,
+		ni_assess_delivery_wanx.adId
+		FROM
+		ni_assess_delivery_wanx ,
+		ni_assess_wanx ,
+		ni_assess_questionnaire ,
+		ni_award
+		WHERE
+		ni_assess_delivery_wanx.deliveryId = ni_assess_wanx.deliveryId AND
+		ni_assess_delivery_wanx.award1Id = ni_award.awardId AND
+		ni_assess_wanx.aqnId = ni_assess_questionnaire.aqnId AND
+		ni_assess_delivery_wanx.status=2 AND
+		ni_assess_wanx.pageStatus=1
+		order by
+		ni_assess_wanx.isTop,ni_assess_wanx.showOrder
+
+
+	</select>
+	<select id="getAssessOrderByAqnId" resultMap="assessMap" parameterType="int">
+		select sum(case when
+		awardId is not NULL then 1 else 0 end) as
+		winnerNum,sum(case when
+		orderId is not NULL then 1 else 0 end) as
+		collectedNum
+		from
+		ni_assess_order
+		where aqnId=#{aqnId}
+	</select>
+
+
+
+</mapper>

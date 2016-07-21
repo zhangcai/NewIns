@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper .//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.newins.dao.SuperSurveyDao">
+	<resultMap type="com.newins.model.SuperSurvey" id="superSurveyMap">
+		<result property="qnId" column="qnId" />
+		<result property="qnType" column="qnType" />
+		<result property="collectedNum" column="collectedNum" />
+		<result property="collectNum" column="collectNum" />
+		<result property="winnerNum" column="winnerNum" />
+		<result property="awardId" column="awardId" />
+		<result property="awardName" column="awardName" />
+		<result property="awardNum" column="awardNum" />
+		<result property="showDes" column="showDes" />
+		<result property="bTime" column="bTime" />
+		<result property="eTime" column="eTime" />
+		<result property="showTitle" column="showTitle" />
+		<result property="publisher" column="publisherName" />
+		<result property="qnSummary" column="qnSummary" />
+		<result property="img" column="img" />
+		<result property="tag1Str" column="tag1Str" />
+		<result property="tag2Str" column="tag2Str" />
+		<result property="tag3Str" column="tag3Str" />
+		<result property="tag4Str" column="tag4Str" />
+		<result property="tag5Str" column="tag5Str" />
+		<result property="adId" column="adId" />
+
+	</resultMap>
+
+	<select id="getSuperSurvey" resultMap="superSurveyMap">
+		SELECT * FROM(
+		SELECT
+		distinct(ni_super_wanx.deliveryId),
+		ni_super_wanx.qnType,
+		ni_super_wanx.qnId,
+		ni_super_wanx.isTop,
+		ni_super_wanx.showOrder,
+		ni_survey_delivery_wanx.bTime,
+		ni_survey_delivery_wanx.eTime,
+		ni_survey_delivery_wanx.collectNum,
+		ni_survey_delivery_wanx.showTitle,
+		ni_survey_delivery_wanx.showDes,
+		ni_survey_delivery_wanx.img,
+		ni_survey_delivery_wanx.collectedNum,
+		ni_survey_delivery_wanx.tag1Str,
+		ni_survey_delivery_wanx.tag2Str,
+		ni_survey_delivery_wanx.tag3Str,
+		ni_survey_delivery_wanx.tag4Str,
+		ni_survey_delivery_wanx.tag5Str,
+		ni_survey_delivery_wanx.adId,
+		ni_survey_questionnaire.publisherName,
+		ni_survey_questionnaire.sqnSummary as qnSummary,
+		ni_award.awardNum,
+		ni_award.awardName,
+		ni_award.awardId
+		FROM
+		ni_survey_delivery_wanx ,
+		ni_super_wanx ,
+		ni_survey_questionnaire ,
+		ni_award
+		WHERE
+		ni_survey_delivery_wanx.deliveryId = ni_super_wanx.deliveryId AND
+		ni_survey_delivery_wanx.award1Id = ni_award.awardId AND
+		ni_super_wanx.qnType=1 AND
+		ni_super_wanx.qnId = ni_survey_questionnaire.sqnId AND
+		ni_survey_delivery_wanx.status=2 AND
+		ni_super_wanx.pageStatus=1
+
+		UNION
+
+		SELECT
+		distinct(ni_super_wanx.deliveryId),
+		ni_super_wanx.qnType,
+		ni_super_wanx.qnId,
+		ni_super_wanx.isTop,
+		ni_super_wanx.showOrder,
+		ni_vote_delivery_wanx.bTime,
+		ni_vote_delivery_wanx.eTime,
+		ni_vote_delivery_wanx.collectNum,
+		ni_vote_delivery_wanx.showTitle,
+		ni_vote_delivery_wanx.showDes,
+		ni_vote_delivery_wanx.img,
+		ni_vote_delivery_wanx.collectedNum,
+		ni_vote_delivery_wanx.tag1Str,
+		ni_vote_delivery_wanx.tag2Str,
+		ni_vote_delivery_wanx.tag3Str,
+		ni_vote_delivery_wanx.tag4Str,
+		ni_vote_delivery_wanx.tag5Str,
+		ni_vote_delivery_wanx.adId,
+		ni_vote_questionnaire.publisherName,
+		ni_vote_questionnaire.vqnSummary
+		as qnSummary,
+		ni_award.awardNum,
+		ni_award.awardName,
+		ni_award.awardId
+		FROM
+		ni_vote_delivery_wanx ,
+		ni_super_wanx ,
+		ni_vote_questionnaire ,
+		ni_award
+		WHERE
+		ni_vote_delivery_wanx.deliveryId =
+		ni_super_wanx.deliveryId AND
+		ni_vote_delivery_wanx.award1Id =
+		ni_award.awardId AND
+		ni_super_wanx.qnType=3 AND
+		ni_super_wanx.qnId = ni_vote_questionnaire.vqnId
+		AND
+		ni_vote_delivery_wanx.status=2 AND
+		ni_super_wanx.pageStatus=1) a
+		order
+		by
+		isTop,showOrder
+
+
+	</select>
+	<select id="getSurveyOrderByQnId" resultMap="superSurveyMap"
+		parameterType="int">
+		select sum(case when
+		awardId is not NULL then 1 else 0
+		end) as
+		winnerNum,sum(case when
+		orderId is not NULL then 1 else 0 end)
+		as
+		collectedNum
+		from
+		ni_survey_order
+		where sqnId=#{qnId}
+	</select>
+
+
+
+</mapper>

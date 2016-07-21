@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper .//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.newins.dao.LotteryDao">
+	<resultMap type="com.newins.model.LotteryDetailInfo" id="lotteryDetailMap">
+		<result property="awardName" column="awardName" />
+		<result property="awardDes" column="awardDes" />
+		<result property="comment" column="comment" />
+		<result property="awardRank" column="awardRank" />
+		<result property="awardNum" column="awardNum" />
+		<result property="awardId" column="awardId" />
+	</resultMap>
+	
+	<resultMap type="com.newins.model.LotteryBasicInfo" id="lotteryBasicInfoMap">
+		<result property="awardTime" column="awardTime" />
+		<result property="comment" column="comment" />
+		<result property="deliveryId" column="deliveryId" />
+		<result property="qnType" column="qnType" />
+		<result property="channel" column="channel" />
+		<result property="sequenceNum" column="sequenceNum" />
+		<result property="lotteryId" column="lotteryId" />
+		<result property="awardRank" column="awardRank" />
+		<result property="userId" column="userId" />
+	</resultMap>
+	
+	
+<!-- 	<select id="getSqnId" resultMap="surveyOderMap"> 
+		select sqnId 
+		from ni_survey_delivery_wanx
+		where deliveryId=#{deliveryId}
+	
+	</select> -->
+	
+	<select id="getSequenceNum" resultType="java.lang.Integer" parameterType="java.util.Map">
+		select sequenceNum
+		from 
+		<if test="qnType == '1'.toString()"> ni_survey_order</if>
+		<if test="qnType == '2'.toString()"> ni_assess_order</if>
+		<if test="qnType == '3'.toString()"> ni_vote_order</if>		
+		where 
+		userId=#{userId} and 
+		<if test="qnType == '1'.toString()"> sqnId=#{qnId}</if>
+		<if test="qnType == '2'.toString()"> aqnId=#{qnId}</if>
+		<if test="qnType == '3'.toString()"> vqnId=#{qnId}</if>
+	</select>
+	
+	<select id="getLotteryBasicInfo" resultMap="lotteryBasicInfoMap">
+		select deliveryId,qnType,channel,sequenceNum,lotteryId,awardRank,userId,awardTime,comment
+		from ni_lottery_20160524
+		where deliveryId=#{deliveryId} 
+		and sequenceNum=#{sequenceNum}
+		and qnType=#{qnType}
+		and channel=#{channel}
+	</select>
+	
+	<select id="getLotteryDetailInfo"   resultMap="lotteryDetailMap">
+		select ni_award.awardNum,ni_award.awardId,ni_award.comment
+			<if test="awardRank == '1'.toString()"> ,award1Name as awardName,award1Des as awardDes</if>
+			<if test="awardRank == '2'.toString()"> ,award2Name as awardName,award2Des as awardDes</if>
+			<if test="awardRank == '3'.toString()"> ,award3Name as awardName,award3Des as awardDes</if>
+			<if test="awardRank == '4'.toString()"> ,award4Name as awardName,award4Des as awardDes</if>
+		from ni_lottery_dict,ni_award
+		where ni_lottery_dict.lotteryId=#{lotteryId} 
+		<if  test="awardRank == '1'.toString()">and ni_lottery_dict.award1Id=ni_award.awardId</if>
+		<if  test="awardRank == '2'.toString()">and ni_lottery_dict.award2Id=ni_award.awardId</if>
+		<if  test="awardRank == '3'.toString()">and ni_lottery_dict.award3Id=ni_award.awardId</if>
+		<if  test="awardRank == '4'.toString()">and ni_lottery_dict.award4Id=ni_award.awardId</if>
+	</select>
+	
+	<update id="updateLotteryUserIdAndAwardTime">
+	update ni_lottery_20160524
+	set userId = #{userId},awardTime = #{awardTime}
+	where deliveryId=#{deliveryId} and qnType=#{qnType} and channel=#{channel} and sequenceNum=#{sequenceNum}
+	</update>
+	
+	<update id="updateOrderAwardId">
+	update 
+		<if test="qnType == '1'.toString()"> ni_survey_order</if>
+		<if test="qnType == '2'.toString()"> ni_assess_order</if>
+		<if test="qnType == '3'.toString()"> ni_vote_order</if>
+	set awardId = #{awardId}
+	where userId=#{userId} and 		
+		<if test="qnType == '1'.toString()"> sqnId=#{qnId}</if>
+		<if test="qnType == '2'.toString()"> aqnId=#{qnId}</if>
+		<if test="qnType == '3'.toString()"> vqnId=#{qnId}</if>
+	</update>
+	
+	
+
+</mapper>

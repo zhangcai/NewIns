@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper .//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.newins.dao.SubmitAssessAnswerDao">
+	<resultMap type="com.newins.model.AssessResult" id="assessResultMap">
+		<result property="totalScore" column="totalScore" />
+		<result property="resultSummary" column="resultSummary" />
+		<result property="resultDetail" column="resultDetail" />
+	</resultMap>
+	<resultMap type="com.newins.model.Assess" id="assessCollectedNum">
+		<result property="aqnId" column="aqnId" />
+		<result property="collectedNum" column="collectedNum" />
+		<result property="collectNum" column="collectNum" />
+	</resultMap>
+
+	<insert id="setAssessAnswer" parameterType="java.util.List"
+		useGeneratedKeys="true">
+		<selectKey resultType="long" keyProperty="id" order="AFTER">
+			SELECT
+			LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO
+		ni_assess_answer(userId,aqnId,aqId,choice,selfDefine,score,duration)
+		values
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			<choose>
+				<when
+					test="item.questionType=='1'.toString() or item.questionType=='2'.toString() or item.questionType=='6'.toString()">
+					( #{item.userId},
+					#{item.aqnId},#{item.aqId},#{item.qAnswer},"",
+					(select
+					<if test="item.qAnswer=='A'.toString()"> option1Score</if>
+					<if test="item.qAnswer=='B'.toString()"> option2Score</if>
+					<if test="item.qAnswer=='C'.toString()"> option3Score</if>
+					<if test="item.qAnswer=='D'.toString()"> option4Score</if>
+					<if test="item.qAnswer=='E'.toString()"> option5Score</if>
+					<if test="item.qAnswer=='F'.toString()"> option6Score</if>
+					<if test="item.qAnswer=='G'.toString()"> option7Score</if>
+					<if test="item.qAnswer=='H'.toString()"> option8Score</if>
+					<if test="item.qAnswer=='I'.toString()"> option9Score</if>
+					<if test="item.qAnswer=='J'.toString()"> option10Score</if>
+					<if test="item.qAnswer=='K'.toString()"> option11Score</if>
+					<if test="item.qAnswer=='L'.toString()"> option12Score</if>
+					<if test="item.qAnswer=='M'.toString()"> option13Score</if>
+					<if test="item.qAnswer=='N'.toString()"> option14Score</if>
+					<if test="item.qAnswer=='O'.toString()"> option15Score</if>
+					<if test="item.qAnswer=='P'.toString()"> option16Score</if>
+					<if test="item.qAnswer=='Q'.toString()"> option17Score</if>
+					<if test="item.qAnswer=='R'.toString()"> option18Score</if>
+					<if test="item.qAnswer=='S'.toString()"> option19Score</if>
+					<if test="item.qAnswer=='T'.toString()"> option20Score</if>
+					<if test="item.qAnswer=='U'.toString()"> option21Score</if>
+					<if test="item.qAnswer=='V'.toString()"> option22Score</if>
+					<if test="item.qAnswer=='W'.toString()"> option23Score</if>
+					<if test="item.qAnswer=='X'.toString()"> option24Score</if>
+					<if test="item.qAnswer=='Y'.toString()"> option25Score</if>
+					<if test="item.qAnswer=='Z'.toString()"> option26Score</if>
+					from ni_assess_question where
+					ni_assess_question.aqId=#{item.aqId}),
+					SEC_TO_TIME(#{item.duration})
+					)
+				</when>
+				<otherwise>
+					( #{item.userId},
+					#{item.aqnId},#{item.aqId},"",#{item.qAnswer},SEC_TO_TIME(#{item.duration})
+					)
+				</otherwise>
+			</choose>
+		</foreach>
+	</insert>
+
+	<insert id="initAssessOrder" parameterType="com.newins.model.AssessOrder"
+		keyProperty="id">
+		INSERT INTO ni_assess_order
+		(userId,aqnId,sequenceNum,orderCTime,answerETime,orderStatus)
+		VALUES
+		(#{userId},#{aqnId},ifnull( (SELECT MAX(sequenceNum)+1 from
+		ni_assess_order
+		ni_assess_order_rename where
+		aqnId=#{aqnId}),1),#{orderCTime},#{answerETime},#{orderStatus})
+	</insert>
+
+	<update id="setResultToOrder" parameterType="com.newins.model.AssessResult">
+		update
+		ni_assess_order set
+		totalScore=#{totalScore},resultSummary=#{resultSummary},resultDetail=#{resultDetail}
+		where userId=#{userId} and aqnId=#{aqnId}
+	</update>
+
+
+	<select id="getAssessResultFromSimple" resultMap="assessResultMap"
+		parameterType="java.util.Map">
+		select resultSummary, resultDetail, (select avg(score)
+		from
+		ni_assess_answer
+		where userId=#{userId} and aqnId=#{aqnId}) as
+		totalScore from
+		ni_assess_model_simple
+		where (select avg(score) from
+		ni_assess_answer where userId=#{userId} and
+		aqnId=#{aqnId}) between
+		intervalBegin and intervalEnd
+
+	</select>
+
+	<select id="getCollectedNumById" resultMap="assessCollectedNum"
+		parameterType="int">
+		select ni_assess_delivery_wanx.collectNum,sum(case when
+		orderId is not NULL then 1 else 0
+		end)
+		as
+		collectedNum
+		from
+		ni_assess_order,ni_assess_delivery_wanx
+		where
+		ni_assess_order.aqnId=#{aqnId} and
+		ni_assess_delivery_wanx.aqnId=#{aqnId}
+	</select>
+
+	<update id="changeDeliveryStatus" parameterType="int">
+		update
+		ni_assess_delivery_wanx set status =3 where aqnId=#{aqnId}
+	</update>
+
+</mapper>

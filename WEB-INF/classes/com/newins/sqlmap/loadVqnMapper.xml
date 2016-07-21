@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper .//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+ <mapper namespace="com.newins.dao.LoadVqnMapper">
+ 	<resultMap type="com.newins.model.NiVoteQuestionnaire" id="vqnItemMapper">
+ 	</resultMap>
+	
+ 		
+	<select id="loadVqn" resultMap="vqnItemMapper" parameterType="java.lang.Integer">
+		SELECT ni_vote_questionnaire.*,ni_qnclass_dict.qnClassName as vqnClassName,award1Id as awardId,lotteryId
+		FROM ni_vote_questionnaire,ni_qnclass_dict,ni_vote_delivery_wanx
+		WHERE deliveryId=#{deliveryId} and ni_vote_questionnaire.vqnClassId = ni_qnclass_dict.qnClassId
+			 and ni_vote_delivery_wanx.vqnId = ni_vote_questionnaire.vqnId
+	</select>
+	
+	</mapper>

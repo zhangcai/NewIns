@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<mappers>
+		<mapper resource="com/newins/sqlmap/botAdMapper.xml"/>
+		<mapper resource="com/newins/sqlmap/daily3UpdateListMapper.xml"/>
+		<mapper resource="com/newins/sqlmap/surveyAnswerMapper.xml"/>
+		<mapper resource="com/newins/sqlmap/lotteryMapper.xml"/>
+		<mapper resource="com/newins/sqlmap/superSurveyMapper.xml"/>
+		<mapper resource="com/newins/sqlmap/NiVoteQuestionnaireMapper.xml"/>
+		<mapper resource="com/newins/sqlmap/submitVoteMapper.xml"/>
+		<mapper resource="com/newins/sqlmap/carouselMapper.xml"/>
+		<mapper resource="com/newins/sqlmap/surveyOrderMapper.xml"/>
+		<mapper resource="com/newins/sqlmap/assessMapper.xml"/>
+		<mapper resource="com/newins/sqlmap/myModelMapper.xml"/>
+		<mapper resource="com/newins/sqlmap/qnAdvertMapper.xml"/>
+		<mapper resource="com/newins/sqlmap/qnTagsMapper.xml"/>
+		<mapper resource="com/newins/sqlmap/reportMapper.xml"/>
+		<mapper resource="com/newins/sqlmap/voteOrderMapper.xml"/>
+		<mapper resource="com/newins/sqlmap/assessAnswerMapper.xml"/>
+		<mapper resource="com/newins/sqlmap/assessOrderMapper.xml"/>
+		<mapper resource="com/newins/sqlmap/loadVqnMapper.xml"/>
+		<mapper resource="com/newins/sqlmap/surveyQuestionnaireMapper.xml"/>
+		<mapper resource="com/newins/sqlmap/surveyQuestionMapper.xml"/>
+		<mapper resource="com/newins/sqlmap/assessQuestionMapper.xml"/>
+		<mapper resource="com/newins/sqlmap/assessQuestionnaireMapper.xml"/>
+		<mapper resource="com/newins/sqlmap/lotteryAwardMapper.xml"/>
+		<mapper resource="com/newins/sqlmap/SavePostalMapper.xml"/>
+	</mappers>		
+</configuration>
+
+

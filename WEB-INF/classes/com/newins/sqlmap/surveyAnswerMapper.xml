@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper .//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.newins.dao.SubmitSurveyAnswerDao">
+	<resultMap type="com.newins.model.SuperSurvey" id="superSurveyCollectedNum">
+		<result property="qnId" column="sqnId" />
+		<result property="collectedNum" column="collectedNum" />
+		<result property="collectNum" column="collectNum" />
+	</resultMap>
+
+	<insert id="setSurveyAnswer" parameterType="java.util.List"
+		useGeneratedKeys="true">
+		<selectKey resultType="long" keyProperty="id" order="AFTER">
+			SELECT
+			LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO
+		ni_survey_answer(userId,sqnId,sqId,choice,selfDefine,duration)
+		values
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			<choose>
+				<when
+					test="item.questionType=='1'.toString() or item.questionType=='2'.toString() or item.questionType=='6'.toString()">
+					( #{item.userId},
+					#{item.sqnId},#{item.sqId},#{item.qAnswer},"",SEC_TO_TIME(#{item.duration})
+					)
+				</when>
+				<otherwise>
+					( #{item.userId},
+					#{item.sqnId},#{item.sqId},"",#{item.qAnswer},SEC_TO_TIME(#{item.duration})
+					)
+				</otherwise>
+			</choose>
+		</foreach>
+	</insert>
+
+	<insert id="initSurveyOrder" parameterType="com.newins.model.SurveyOrder"
+		keyProperty="id">
+		INSERT INTO ni_survey_order
+		(userId,sqnId,sequenceNum,orderCTime,answerETime,orderStatus)
+		VALUES
+		(#{userId},#{sqnId},ifnull( (SELECT MAX(sequenceNum)+1 from
+		ni_survey_order
+		ni_survey_order_rename where
+		sqnId=#{sqnId}),1),#{orderCTime},#{answerETime},#{orderStatus})
+	</insert>
+
+	<select id="getCollectedNumById" resultMap="superSurveyCollectedNum"
+		parameterType="int">
+		select ni_survey_delivery_wanx.collectNum,sum(case when
+		orderId is not NULL then 1 else 0
+		end)
+		as
+		collectedNum
+		from
+		ni_survey_order,ni_survey_delivery_wanx
+		where ni_survey_order.sqnId=#{sqnId} and ni_survey_delivery_wanx.sqnId=#{sqnId}
+	</select>
+
+	<update id="changeDeliveryStatus" parameterType="int">
+		update
+		ni_survey_delivery_wanx set status =3 where sqnId=#{sqnId}
+	</update>
+
+</mapper>

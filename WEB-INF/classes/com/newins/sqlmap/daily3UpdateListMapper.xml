@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper .//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.newins.dao.Daily3UpdateDao">
+	<resultMap type="com.newins.model.Daily3UpdateItem" id="daily3UpdateMap">
+		<result property="deliveryId" column="deliveryId" />
+		<result property="qnId" column="qnId" />	
+		<result property="collectedNum" column="collectedNum" />
+		<result property="collectNum" column="collectNum" />
+		<result property="winnerNum" column="winnerNum" />
+		<result property="awardId" column="awardId" />
+		<result property="awardName" column="awardName" />
+		<result property="awardNum" column="awardNum" />
+		<result property="showDes" column="showDes" />
+		<result property="bTime" column="bTime" />
+		<result property="eTime" column="eTime" />
+		<result property="showTitle" column="showTitle" />
+		<result property="publisher" column="publisherName" />
+		<result property="qnSummary" column="qnSummary" />
+		<result property="tag1Str" column="tag1Str" />
+		<result property="tag2Str" column="tag2Str" />
+		<result property="tag3Str" column="tag3Str" />
+		<result property="tag4Str" column="tag4Str" />
+		<result property="tag5Str" column="tag5Str" />
+		<result property="qnType" column="qnType" />
+		
+	</resultMap>
+
+	<select id="getDaily3UpdateList" resultMap="daily3UpdateMap">
+		SELECT * FROM(
+		SELECT
+		distinct(ni_daily3update_wanx.deliveryId),
+		ni_daily3update_wanx.qnId,
+		ni_daily3update_wanx.qnType,
+		ni_daily3update_wanx.isTop,
+		ni_daily3update_wanx.showOrder,
+		ni_survey_delivery_wanx.collectNum,
+		ni_survey_delivery_wanx.bTime,
+		ni_survey_delivery_wanx.eTime,
+		ni_survey_delivery_wanx.showTitle,
+		ni_survey_delivery_wanx.showDes,
+		ni_survey_delivery_wanx.img,
+		ni_survey_delivery_wanx.collectedNum,
+		ni_survey_delivery_wanx.tag1Str,
+		ni_survey_delivery_wanx.tag2Str,
+		ni_survey_delivery_wanx.tag3Str,
+		ni_survey_delivery_wanx.tag4Str,
+		ni_survey_delivery_wanx.tag5Str,
+		ni_award.awardId,
+		ni_award.awardName,
+		ni_award.awardNum,
+		ni_survey_questionnaire.publisherName,
+		ni_survey_questionnaire.sqnSummary as qnSummary
+
+
+		FROM
+		ni_daily3update_wanx,
+		ni_survey_delivery_wanx ,
+		ni_award,
+		ni_survey_questionnaire
+
+
+		WHERE
+		ni_survey_delivery_wanx.deliveryId=ni_daily3update_wanx.deliveryId AND
+		ni_award.awardId=ni_survey_delivery_wanx.award1Id AND
+		ni_daily3update_wanx.qnType=1 AND
+		ni_daily3update_wanx.pageStatus=1 AND
+		ni_survey_delivery_wanx.`status`=2 AND
+		ni_survey_questionnaire.sqnId=ni_survey_delivery_wanx.sqnId
+	
+		UNION
+
+		SELECT
+		distinct(ni_daily3update_wanx.deliveryId),
+		ni_daily3update_wanx.qnId,
+		ni_daily3update_wanx.qnType,
+		ni_daily3update_wanx.isTop,
+		ni_daily3update_wanx.showOrder,
+		ni_assess_delivery_wanx.collectNum,
+		ni_assess_delivery_wanx.bTime,
+		ni_assess_delivery_wanx.eTime,
+		ni_assess_delivery_wanx.showTitle,
+		ni_assess_delivery_wanx.showDes,
+		ni_assess_delivery_wanx.img,
+		ni_assess_delivery_wanx.collectedNum,
+		ni_assess_delivery_wanx.tag1Str,
+		ni_assess_delivery_wanx.tag2Str,
+		ni_assess_delivery_wanx.tag3Str,
+		ni_assess_delivery_wanx.tag4Str,
+		ni_assess_delivery_wanx.tag5Str,
+		ni_award.awardId,
+		ni_award.awardName,
+		ni_award.awardNum,
+		ni_assess_questionnaire.publisherName,
+		ni_assess_questionnaire.aqnSummary as qnSummary
+
+
+		FROM
+		ni_daily3update_wanx,
+		ni_assess_delivery_wanx ,
+		ni_award,
+		ni_assess_questionnaire
+
+
+		WHERE
+		ni_assess_delivery_wanx.deliveryId=ni_daily3update_wanx.deliveryId AND
+		ni_award.awardId=ni_assess_delivery_wanx.award1Id AND
+		ni_daily3update_wanx.qnType=2 AND
+		ni_daily3update_wanx.pageStatus=1 AND
+		ni_assess_delivery_wanx.`status`=2 AND
+		ni_assess_questionnaire.aqnId=ni_assess_delivery_wanx.aqnId
+		
+		UNION
+		
+		SELECT
+		distinct(ni_daily3update_wanx.deliveryId),
+		ni_daily3update_wanx.qnId,
+		ni_daily3update_wanx.qnType,
+		ni_daily3update_wanx.isTop,
+		ni_daily3update_wanx.showOrder,
+		ni_vote_delivery_wanx.collectNum,
+		ni_vote_delivery_wanx.bTime,
+		ni_vote_delivery_wanx.eTime,
+		ni_vote_delivery_wanx.showTitle,
+		ni_vote_delivery_wanx.showDes,
+		ni_vote_delivery_wanx.img,
+		ni_vote_delivery_wanx.collectedNum,
+		ni_vote_delivery_wanx.tag1Str,
+		ni_vote_delivery_wanx.tag2Str,
+		ni_vote_delivery_wanx.tag3Str,
+		ni_vote_delivery_wanx.tag4Str,
+		ni_vote_delivery_wanx.tag5Str,
+		ni_award.awardId,
+		ni_award.awardName,
+		ni_award.awardNum,
+		ni_vote_questionnaire.publisherName,
+		ni_vote_questionnaire.vqnSummary as qnSummary
+
+
+		FROM
+		ni_daily3update_wanx,
+		ni_vote_delivery_wanx ,
+		ni_award,
+		ni_vote_questionnaire
+
+
+		WHERE
+		ni_vote_delivery_wanx.deliveryId=ni_daily3update_wanx.deliveryId AND
+		ni_award.awardId=ni_vote_delivery_wanx.award1Id AND
+		ni_daily3update_wanx.qnType=3 AND
+		ni_daily3update_wanx.pageStatus=1 AND
+		ni_vote_delivery_wanx.`status`=2 AND
+		ni_vote_questionnaire.vqnId=ni_vote_delivery_wanx.vqnId) a
+
+		ORDER BY
+		isTop,showOrder
+
+	</select>
+
+	<select id="getOrderData" resultMap="daily3UpdateMap" parameterType="java.util.Map">
+		select 
+		sum(case when awardId is not NULL then 1 else 0 end) as
+		winnerNum,sum(case when orderId is not NULL then 1 else 0 end) as
+		collectedNum
+		from 
+		<if test="qnType == '1'.toString()"> ni_survey_order</if>
+		<if test="qnType == '2'.toString()"> ni_assess_order</if>
+		<if test="qnType == '3'.toString()"> ni_vote_order</if>		
+		where 
+		<if test="qnType == '1'.toString()"> sqnId=#{qnId}</if>
+		<if test="qnType == '2'.toString()"> aqnId=#{qnId}</if>
+		<if test="qnType == '3'.toString()"> vqnId=#{qnId}</if>
+		
+	</select>
+	
+
+</mapper>
